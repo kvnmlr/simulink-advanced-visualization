@@ -11,6 +11,11 @@ public class TCPServer : MonoBehaviour
 {
     public int port;
     public GameObject obj;
+    public bool x;
+    public bool y;
+    public bool theta;
+    public bool text;
+
     #region private members 	
     /// <summary> 	
     /// TCPListener to listen for incomming TCP connection 	
@@ -79,12 +84,22 @@ public class TCPServer : MonoBehaviour
                             {
                                 double val = BitConverter.ToDouble(incommingData, 8 * ii);
                                 convertedData[ii] = val;
-                                Debug.Log(val);
                                 UnityThread.executeInUpdate(() =>
                                 {
-                                    obj.transform.localPosition = new Vector3((float)val, 0, 0);
+                                    if (x)
+                                    {
+                                        obj.transform.localPosition = new Vector3((float)val, obj.transform.localPosition.y, obj.transform.localPosition.z);
+                                    } else if (y)
+                                    {
+                                        obj.transform.localPosition = new Vector3(obj.transform.localPosition.x, (float)val, obj.transform.localPosition.z);
+                                    } else if (theta)
+                                    {
+                                        obj.transform.localEulerAngles = new Vector3(0, 0, (float)val);
+                                    } else if(text)
+                                    {
+                                        obj.gameObject.GetComponent<TextMesh>().text = val.ToString();
+                                    }
                                 });
-
                                 
                             }
                         }
